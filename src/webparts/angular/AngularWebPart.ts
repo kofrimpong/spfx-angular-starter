@@ -11,10 +11,13 @@ import * as strings from 'AngularWebPartStrings';
 
 //Include Polyfills for unsupported browsers
 import "core-js/es7/reflect";
+//Import zone
+import "zone.js";
 
 //import { enableProdMode } from '@angular/core';
 import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
 import { AppModule } from './app/app.module';
+import { SharePointContextService } from './app/providers/sharepoint.context.service';
 //import { environment } from './environments/environment';
 
 export interface IAngularWebPartProps {
@@ -30,8 +33,9 @@ export default class AngularWebPart extends BaseClientSideWebPart<IAngularWebPar
   public render(): void {
     //this.properties;
     //this.context;
-    this.domElement.innerHTML = `<app-root context="${this.context}" properties="${this.properties}"></app-root>`;
-    platformBrowserDynamic().bootstrapModule(AppModule, { ngZone: 'noop' })
+    this.domElement.innerHTML = `<app-root></app-root>`;
+    platformBrowserDynamic([{ provide: SharePointContextService, useValue: new SharePointContextService(this.context, this.properties) }])
+      .bootstrapModule(AppModule)
       .catch(err => console.log(err));
   }
 
