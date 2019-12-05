@@ -13,6 +13,7 @@ import * as strings from 'AngularWebPartStrings';
 import "core-js/es7/reflect";
 //Import zone
 import "zone.js";
+import {isDevMode, NgZone} from '@angular/core';
 
 //import { enableProdMode } from '@angular/core';
 import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
@@ -30,17 +31,23 @@ export interface IAngularWebPartProps {
 
 export default class AngularWebPart extends BaseClientSideWebPart<IAngularWebPartProps> {
 
+  private ngZone = new NgZone({enableLongStackTrace: isDevMode()});
+
   public render(): void {
     //this.properties;
     //this.context;
     this.domElement.innerHTML = `<app-root></app-root>`;
     platformBrowserDynamic([{ provide: SharePointContextService, useValue: new SharePointContextService(this.context, this.properties) }])
-      .bootstrapModule(AppModule)
+      .bootstrapModule(AppModule,{ngZone: this.ngZone})
       .catch(err => console.log(err));
   }
 
   protected get dataVersion(): Version {
     return Version.parse('1.0');
+  }
+
+  protected onPropertyChange(property:string,newValue:any){
+    this.ngZone.run(()=>{})
   }
 
   protected getPropertyPaneConfiguration(): IPropertyPaneConfiguration {

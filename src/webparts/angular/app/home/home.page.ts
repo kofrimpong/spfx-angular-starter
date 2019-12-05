@@ -4,7 +4,6 @@ import { SharePointContextService } from '../providers/sharepoint.context.servic
 @Component({
     selector: 'app-home',
     templateUrl: '/src/webparts/angular/app/home/home.page.html'
-    //template: `Helllo worlddd`
 })
 export class HomePage {
 
